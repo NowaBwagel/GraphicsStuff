@@ -1,5 +1,7 @@
+package com.nowabwagel.test;
+
 public class Main {
 	public static void main(String[] args) {
-		new Test().run();
+		new HelloWorld().run();
 	}
 }
