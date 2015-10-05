@@ -5,6 +5,6 @@ import com.nowabwagel.engine.core.Display;
 public class Main {
 	public static void main(String[] args) {
 		// new HelloWorld().run();
-		new Display("Hey", 800, 600).start();
+		new Display("HeyGuys", 800, 600).start();
 	}
 }

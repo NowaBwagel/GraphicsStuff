@@ -100,8 +100,9 @@ public class Display {
 	}
 
 	private void render() {
-		float mul = (float) Math.abs(Math.sin(System.nanoTime() / 1000000000.0));
-		
+		float mul = (float) Math
+				.abs(Math.sin(System.nanoTime() / 1000000000.0));
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GL11.glBegin(GL11.GL_TRIANGLES);
 		// Top & Red

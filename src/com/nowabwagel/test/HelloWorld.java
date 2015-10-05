@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class HelloWorld {
-
 	// We need to strongly reference callback instances.
 	private GLFWErrorCallback errorCallback;
 	private GLFWKeyCallback keyCallback;
