@@ -1,10 +1,10 @@
 package com.nowabwagel.test;
 
-import com.nowabwagel.engine.core.Display;
+import com.nowabwagel.engine.core.TestDisplay;
 
 public class Main {
 	public static void main(String[] args) {
 		// new HelloWorld().run();
-		new Display("HeyGuys", 800, 600).start();
+		new TestDisplay("HeyGuys", 800, 600).start();
 	}
 }

@@ -1,125 +1,89 @@
 package com.nowabwagel.engine.core;
 
-import org.lwjgl.Sys;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-
-import java.nio.ByteBuffer;
-
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallback.SAM;
+import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL32;
+import org.lwjgl.system.MemoryUtil;
 
 public class Display {
-
 	private GLFWErrorCallback errorCallback;
-	private GLFWKeyCallback keyCallback;
-
 	private long window;
+	boolean resized = false;
+	int WIDTH = 600;
+	int HEIGHT = 600;
 
-	private String title;
-	private int width;
-	private int height;
-
-	@SuppressWarnings("unused")
-	private float dTime = 0;
-
-	public Display(String title, int width, int height) {
-		this.title = title;
-		this.width = width;
-		this.height = height;
-	}
-
-	public void start() {
-		System.out.println("LWJGL: " + Sys.getVersion());
-
+	public Display() {
 		try {
-			init();
-			run();
+			glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
+			if (glfwInit() != GL11.GL_TRUE)
+				throw new IllegalStateException("Unable to initialize GLFW");
+			glfwDefaultWindowHints();
+			glfwWindowHint(GLFW_VISIBLE, GL11.GL_FALSE); // the window will stay
+															// hidden after
+															// creation
+			glfwWindowHint(GLFW_RESIZABLE, GL11.GL_TRUE); // the window will be
+															// resizable
 
-			glfwDestroyWindow(window);
-			keyCallback.release();
+			window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL);
+			if (window == MemoryUtil.NULL)
+				throw new RuntimeException("Failed to create the GLFW window");
+			// Get the resolution of the primary monitor
+			ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			// Center our window
+			glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - WIDTH) / 2,
+					(GLFWvidmode.height(vidmode) - HEIGHT) / 2);
+			glfwSetCallback(window, GLFWWindowSizeCallback(new SAM() {
+				@Override
+				public void invoke(long window, int width, int height) {
+					resized = true;
+					WIDTH = width;
+					HEIGHT = height;
+				}
+			}));
+			// Make the OpenGL context current
+			glfwMakeContextCurrent(window);
+			// Enable v-sync
+			glfwSwapInterval(1);
+
+			// Make the window visible
+			glfwShowWindow(window);
+			GL.createCapabilities();
+
+			GL11.glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
+
+			while (glfwWindowShouldClose(window) == GL11.GL_FALSE) {
+				if (resized) {
+					GL11.glViewport(0, 0, WIDTH, HEIGHT);
+					resized = false;
+				}
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // clear
+																					// the
+																					// framebuffer
+				glfwSwapBuffers(window); // swap the color buffers
+
+				// Poll for window events. The key callback above will only be
+				// invoked during this call.
+				glfwPollEvents();
+			}
 		} finally {
 			glfwTerminate();
 			errorCallback.release();
 		}
-
 	}
 
-	private void init() {
-		glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
-
-		if (glfwInit() != GL11.GL_TRUE)
-			throw new IllegalStateException("Unable to initialize GLFW");
-
-		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-
-		window = glfwCreateWindow(width, height, title, NULL, NULL);
-		if (window == NULL)
-			throw new RuntimeException("Failed to create GLFW window");
-
-		// TODO: move glfwKeyCallback to own class
-		glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-			@Override
-			public void invoke(long window, int key, int scancode, int action,
-					int mods) {
-				if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-					glfwSetWindowShouldClose(window, GL_TRUE);
-			}
-		});
-
-		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2,
-				(GLFWvidmode.height(vidmode) - height) / 2);
-
-		glfwMakeContextCurrent(window);
-		glfwSwapInterval(1);
-		glfwShowWindow(window);
-	}
-
-	public void run() {
-		GL.createCapabilities();
-
-		glClearColor(0f, 0f, 0f, 0f);
-		long sTime = 0;
-
-		while (glfwWindowShouldClose(window) == GL_FALSE) {
-			sTime = System.nanoTime();
-
-			render();
-			glfwPollEvents();
-			glfwSwapBuffers(window);
-
-			dTime = (System.nanoTime() - sTime) / 1000000000.0f;
-		}
-
-	}
-
-	private void render() {
-		float mul = (float) Math
-				.abs(Math.sin(System.nanoTime() / 1000000000.0));
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		GL11.glBegin(GL11.GL_TRIANGLES);
-		// Top & Red
-		GL11.glColor3f(1.0f * mul, 0.0f, 0.0f);
-		GL11.glVertex2f(0.0f, 1.0f);
-
-		// Right & Green
-		GL11.glColor3f(0.0f, 1.0f * mul, 0.0f);
-		GL11.glVertex2f(1.0f, -1.0f);
-
-		// Left & Blue
-		GL11.glColor3f(0.0f, 0.0f, 1.0f * mul);
-		GL11.glVertex2f(-1.0f, -1.0f);
-		GL11.glEnd();
-	}
-
-	public long getWindow() {
-		return window;
+	public static void main(String[] args) {
+		new Display();
 	}
 }
