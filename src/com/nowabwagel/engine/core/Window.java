@@ -17,6 +17,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback.SAM;
 import org.lwjgl.opengl.GL;
@@ -25,6 +26,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import com.nowabwagel.engine.core.input.CursorPosHandler;
 import com.nowabwagel.engine.core.input.KeyboardHandler;
+import com.nowabwagel.engine.core.input.MouseButtonHandler;
 
 /**
  * This class will be used by all any program using this to create windows, this
@@ -60,6 +62,7 @@ public class Window {
 
 	private GLFWKeyCallback keyCallback;
 	private GLFWCursorPosCallback cursorPosCallback;
+	private GLFWMouseButtonCallback mouseButtonCallback;
 
 	/**
 	 * Pointer for GLFW / LWJGL for the window
@@ -116,7 +119,8 @@ public class Window {
 
 		GLFW.glfwSetKeyCallback(window, (keyCallback = new KeyboardHandler()));
 		GLFW.glfwSetCursorPosCallback(window, (cursorPosCallback = new CursorPosHandler()));
-
+		GLFW.glfwSetMouseButtonCallback(window, (mouseButtonCallback = new MouseButtonHandler()));
+		
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);

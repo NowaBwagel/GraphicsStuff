@@ -13,6 +13,11 @@ public class Vector2f {
 		this.y = y;
 	}
 
+	public Vector2f(double x, double y) {
+		this.x = (float) x;
+		this.y = (float) y;
+	}
+
 	public float getX() {
 		return x;
 	}
