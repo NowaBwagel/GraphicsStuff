@@ -18,12 +18,14 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWWindowPosCallback;
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback.SAM;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
+import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
 import com.nowabwagel.engine.core.input.CursorPosHandler;
 import com.nowabwagel.engine.core.input.KeyboardHandler;
 import com.nowabwagel.engine.core.input.MouseButtonHandler;
@@ -63,6 +65,7 @@ public class Window {
 	private GLFWKeyCallback keyCallback;
 	private GLFWCursorPosCallback cursorPosCallback;
 	private GLFWMouseButtonCallback mouseButtonCallback;
+	private GLFWWindowPosCallback windowPosCallback;
 
 	/**
 	 * Pointer for GLFW / LWJGL for the window
@@ -116,11 +119,18 @@ public class Window {
 		// MemoryUtil.NULL.
 		if (window == MemoryUtil.NULL)
 			throw new RuntimeException("Sorry, I failed at making a window.");
-
-		GLFW.glfwSetKeyCallback(window, (keyCallback = new KeyboardHandler()));
-		GLFW.glfwSetCursorPosCallback(window, (cursorPosCallback = new CursorPosHandler()));
-		GLFW.glfwSetMouseButtonCallback(window, (mouseButtonCallback = new MouseButtonHandler()));
 		
+		// So our callbacks don't go through a nasty garbage collection
+		keyCallback = new KeyboardHandler();
+		cursorPosCallback = new CursorPosHandler();
+		mouseButtonCallback = new MouseButtonHandler();
+		windowPosCallback = new WindowPosCallback();
+		
+		GLFW.glfwSetKeyCallback(window, keyCallback);
+		GLFW.glfwSetCursorPosCallback(window, cursorPosCallback);
+		GLFW.glfwSetMouseButtonCallback(window, mouseButtonCallback);
+		GLFW.glfwSetWindowPosCallback(window, windowPosCallback);
+
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);

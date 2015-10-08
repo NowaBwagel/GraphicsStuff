@@ -3,8 +3,11 @@ package com.nowabwagel.engine.core;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
 import com.nowabwagel.engine.core.input.CursorPosHandler;
 import com.nowabwagel.engine.core.input.KeyboardHandler;
+import com.nowabwagel.engine.core.input.MouseButtonHandler;
+import com.nowabwagel.engine.core.input.events.KeyEvent;
 
 public class MainComponent {
 	private double FRAME_CAP;
@@ -65,25 +68,35 @@ public class MainComponent {
 				unProcessedTime -= frameTime;
 
 				Time.setDelta(frameTime);
-				
+
 				game.input();
 				game.update();
-				
+
 				GLFW.glfwPollEvents();
 
-				if (GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE || KeyboardHandler.isKeyDown(GLFW.GLFW_KEY_ESCAPE))
-					stop();
-				
-				if (display.getResized()) {
-					GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
-					display.setResized(false);
-				}
+				KeyEvent keyEvent;
+				while ((keyEvent = KeyboardHandler.fifoKeyEvents.get()) != null) {
 
+					if (GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE
+							|| keyEvent.getKey() == GLFW.GLFW_KEY_ESCAPE && keyEvent.getAction() == GLFW.GLFW_RELEASE)
+						stop();
+					
+					if (MouseButtonHandler.getPress(GLFW.GLFW_MOUSE_BUTTON_LEFT))
+						System.out.println("Left Mouse Button Presses");
+
+					if (WindowPosCallback.getMoved())
+						System.out.println(WindowPosCallback.getPos());
+
+					if (display.getResized()) {
+						GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
+						display.setResized(false);
+					}
+				}
 				if (frameCounter >= Time.SECOND) {
 					System.out.println(frames);
 					frames = 0;
 					frameCounter = 0;
-					
+
 				}
 
 			}
