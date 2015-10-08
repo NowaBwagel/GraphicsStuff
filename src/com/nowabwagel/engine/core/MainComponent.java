@@ -3,11 +3,11 @@ package com.nowabwagel.engine.core;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import com.nowabwagel.engine.core.callbacks.KeyCallback;
+import com.nowabwagel.engine.core.callbacks.MouseButtonCallback;
 import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
-import com.nowabwagel.engine.core.input.CursorPosHandler;
-import com.nowabwagel.engine.core.input.KeyboardHandler;
-import com.nowabwagel.engine.core.input.MouseButtonHandler;
 import com.nowabwagel.engine.core.input.events.KeyEvent;
+import com.nowabwagel.engine.core.input.events.MouseEvent;
 
 public class MainComponent {
 	private double FRAME_CAP;
@@ -71,27 +71,39 @@ public class MainComponent {
 
 				game.input();
 				game.update();
+				display.updateWindow();
+
+				if (display.getIsCloseRequested())
+					stop();
 
 				GLFW.glfwPollEvents();
 
 				KeyEvent keyEvent;
-				while ((keyEvent = KeyboardHandler.fifoKeyEvents.get()) != null) {
 
+				while ((keyEvent = KeyCallback.fifoKeyEvents.get()) != null) {
 					if (GLFW.glfwWindowShouldClose(window) == GL11.GL_TRUE
-							|| keyEvent.getKey() == GLFW.GLFW_KEY_ESCAPE && keyEvent.getAction() == GLFW.GLFW_RELEASE)
+							|| keyEvent.getKey() == GLFW.GLFW_KEY_ESCAPE
+							&& keyEvent.getAction() == GLFW.GLFW_RELEASE)
 						stop();
-					
-					if (MouseButtonHandler.getPress(GLFW.GLFW_MOUSE_BUTTON_LEFT))
-						System.out.println("Left Mouse Button Presses");
-
-					if (WindowPosCallback.getMoved())
-						System.out.println(WindowPosCallback.getPos());
-
-					if (display.getResized()) {
-						GL11.glViewport(0, 0, display.getWidth(), display.getHeight());
-						display.setResized(false);
-					}
 				}
+
+				MouseEvent mouseEvent;
+
+				while ((mouseEvent = MouseButtonCallback.fifoBuffer.get()) != null) {
+					if (mouseEvent.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT
+							&& mouseEvent.getAction() == GLFW.GLFW_RELEASE)
+						System.out.println("Left Mouse Button Released");
+				}
+
+				if (WindowPosCallback.getMoved())
+					System.out.println(WindowPosCallback.getPos());
+
+				if (display.getResized()) {
+					GL11.glViewport(0, 0, display.getWidth(),
+							display.getHeight());
+					display.setResized(false);
+				}
+
 				if (frameCounter >= Time.SECOND) {
 					System.out.println(frames);
 					frames = 0;

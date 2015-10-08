@@ -1,14 +1,12 @@
 package com.nowabwagel.engine.core;
 
-import static org.lwjgl.glfw.Callbacks.glfwSetCallback;
-import static org.lwjgl.glfw.GLFW.GLFWWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 import java.nio.ByteBuffer;
 
@@ -19,16 +17,18 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWWindowPosCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.glfw.GLFWvidmode;
-import org.lwjgl.glfw.GLFWWindowSizeCallback.SAM;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
+import com.nowabwagel.engine.core.callbacks.CursorPosCallback;
+import com.nowabwagel.engine.core.callbacks.KeyCallback;
+import com.nowabwagel.engine.core.callbacks.MouseButtonCallback;
+import com.nowabwagel.engine.core.callbacks.WindowCloseCallback;
 import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
-import com.nowabwagel.engine.core.input.CursorPosHandler;
-import com.nowabwagel.engine.core.input.KeyboardHandler;
-import com.nowabwagel.engine.core.input.MouseButtonHandler;
+import com.nowabwagel.engine.core.callbacks.WindowSizeCallback;
 
 /**
  * This class will be used by all any program using this to create windows, this
@@ -62,10 +62,14 @@ public class Window {
 	 */
 	private GLFWErrorCallback errorCallback;
 
-	private GLFWKeyCallback keyCallback;
-	private GLFWCursorPosCallback cursorPosCallback;
-	private GLFWMouseButtonCallback mouseButtonCallback;
-	private GLFWWindowPosCallback windowPosCallback;
+	// FIXME: Make all callbacks for events non static so multiple windows can
+	// be created at once.
+	private KeyCallback keyCallback;
+	private CursorPosCallback cursorPosCallback;
+	private MouseButtonCallback mouseButtonCallback;
+	private WindowPosCallback windowPosCallback;
+	private WindowSizeCallback windowSizeCallback;
+	private WindowCloseCallback windowCloseCallback;
 
 	/**
 	 * Pointer for GLFW / LWJGL for the window
@@ -90,19 +94,20 @@ public class Window {
 	}
 
 	/**
-	 * Used to initialize GLFW / LWJGL.
-	 * Called by {@link #start()}
+	 * Used to initialize GLFW / LWJGL. Called by {@link #start()}
 	 * 
 	 * @throws IllegalStateException
 	 * @throws RuntimeException
 	 */
 	public void init() throws IllegalStateException, RuntimeException {
 		// Set Error Callback for GLFW and make errorCallback point to it.
-		GLFW.glfwSetErrorCallback((errorCallback = Callbacks.errorCallbackPrint(System.err)));
+		GLFW.glfwSetErrorCallback((errorCallback = Callbacks
+				.errorCallbackPrint(System.err)));
 
 		// If GLFW fails to initialize then I will throw an error at you.
 		if (GLFW.glfwInit() != GL11.GL_TRUE)
-			throw new IllegalStateException("Sorry, I failed at initializing GLFW.");
+			throw new IllegalStateException(
+					"Sorry, I failed at initializing GLFW.");
 
 		// Now that GLFW is init. We can make the Window!
 		// First we can't GLFW to know that we don't want the window to show up
@@ -113,36 +118,33 @@ public class Window {
 
 		// Now that GLFW know what we want the window to do we will create the
 		// window.
-		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
+		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL,
+				MemoryUtil.NULL);
 
 		// However if the window fails to be made it will just return
 		// MemoryUtil.NULL.
 		if (window == MemoryUtil.NULL)
 			throw new RuntimeException("Sorry, I failed at making a window.");
-		
+
 		// So our callbacks don't go through a nasty garbage collection
-		keyCallback = new KeyboardHandler();
-		cursorPosCallback = new CursorPosHandler();
-		mouseButtonCallback = new MouseButtonHandler();
+		keyCallback = new KeyCallback();
+		cursorPosCallback = new CursorPosCallback();
+		mouseButtonCallback = new MouseButtonCallback();
 		windowPosCallback = new WindowPosCallback();
-		
+		windowSizeCallback = new WindowSizeCallback();
+		windowCloseCallback = new WindowCloseCallback();
+
 		GLFW.glfwSetKeyCallback(window, keyCallback);
 		GLFW.glfwSetCursorPosCallback(window, cursorPosCallback);
 		GLFW.glfwSetMouseButtonCallback(window, mouseButtonCallback);
 		GLFW.glfwSetWindowPosCallback(window, windowPosCallback);
+		GLFW.glfwSetWindowSizeCallback(window, windowSizeCallback);
+		GLFW.glfwSetWindowCloseCallback(window, windowCloseCallback);
 
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);
-
-		glfwSetCallback(window, GLFWWindowSizeCallback(new SAM() {
-			@Override
-			public void invoke(long window, int w, int h) {
-				resized = true;
-				width = w;
-				height = h;
-			}
-		}));
+		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2,
+				(GLFWvidmode.height(vidmode) - height) / 2);
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(0);
@@ -150,6 +152,16 @@ public class Window {
 
 		GL.createCapabilities();
 		glClearColor(0f, 0f, 0.5f, 1f);
+	}
+
+	public void updateWindow() {
+		int w = windowSizeCallback.getWidth();
+		int h = windowSizeCallback.getHeight();
+		if (w != width || h != height) {
+			width = w;
+			height = h;
+			GL11.glViewport(0, 0, w, h);
+		}
 	}
 
 	public void render() {
@@ -182,6 +194,10 @@ public class Window {
 		return resized;
 	}
 
+	public boolean getIsCloseRequested() {
+		return windowCloseCallback.isCloseRequested();
+	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -197,4 +213,5 @@ public class Window {
 	public void setResized(boolean resized) {
 		this.resized = resized;
 	}
+
 }

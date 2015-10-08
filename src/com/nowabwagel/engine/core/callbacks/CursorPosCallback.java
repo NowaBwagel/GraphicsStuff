@@ -1,17 +1,18 @@
-package com.nowabwagel.engine.core.input;
+package com.nowabwagel.engine.core.callbacks;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 
 import com.nowabwagel.engine.core.math.Vector2f;
 
-public class CursorPosHandler extends GLFWCursorPosCallback {
+public class CursorPosCallback extends GLFWCursorPosCallback {
+	// TODO: Im static
 	private static double xpos = 0;
 	private static double ypos = 0;
 
 	@Override
 	public void invoke(long window, double xpos, double ypos) {
-		CursorPosHandler.xpos = xpos;
-		CursorPosHandler.ypos = ypos;
+		CursorPosCallback.xpos = xpos;
+		CursorPosCallback.ypos = ypos;
 	}
 
 	public static double getXpos() {
