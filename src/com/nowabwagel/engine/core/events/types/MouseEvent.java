@@ -1,4 +1,4 @@
-package com.nowabwagel.engine.core.input.events;
+package com.nowabwagel.engine.core.events.types;
 
 public class MouseEvent {
 	private long window;

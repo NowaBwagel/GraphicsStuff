@@ -2,7 +2,7 @@ package com.nowabwagel.engine.core.callbacks;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 
-import com.nowabwagel.engine.core.input.events.KeyEvent;
+import com.nowabwagel.engine.core.events.types.KeyEvent;
 import com.nowabwagel.util.FiFoBuffer;
 
 public class KeyCallback extends GLFWKeyCallback {

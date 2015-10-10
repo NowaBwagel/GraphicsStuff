@@ -6,8 +6,9 @@ import org.lwjgl.opengl.GL11;
 import com.nowabwagel.engine.core.callbacks.KeyCallback;
 import com.nowabwagel.engine.core.callbacks.MouseButtonCallback;
 import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
-import com.nowabwagel.engine.core.input.events.KeyEvent;
-import com.nowabwagel.engine.core.input.events.MouseEvent;
+import com.nowabwagel.engine.core.events.types.KeyEvent;
+import com.nowabwagel.engine.core.events.types.MouseEvent;
+import com.nowabwagel.engine.core.layers.TestLayer;
 
 public class MainComponent {
 	private double FRAME_CAP;
@@ -31,6 +32,7 @@ public class MainComponent {
 
 		display.init();
 		window = display.getWindow();
+		display.addLayer(new TestLayer());
 		run();
 	}
 
@@ -113,7 +115,7 @@ public class MainComponent {
 
 			}
 			if (render) {
-				render();
+				onRender();
 				frames++;
 			} else
 				try {
@@ -125,9 +127,9 @@ public class MainComponent {
 		cleanup();
 	}
 
-	private void render() {
+	private void onRender() {
 		game.render();
-		display.render();
+		display.onRender();
 	}
 
 	private void cleanup() {

@@ -9,6 +9,8 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
@@ -24,6 +26,7 @@ import com.nowabwagel.engine.core.callbacks.MouseButtonCallback;
 import com.nowabwagel.engine.core.callbacks.WindowCloseCallback;
 import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
 import com.nowabwagel.engine.core.callbacks.WindowSizeCallback;
+import com.nowabwagel.engine.core.layers.Layer;
 
 /**
  * This class will be used by all any program using this to create windows, this
@@ -72,6 +75,12 @@ public class Window {
 	private long window;
 
 	/**
+	 * Every different layer is a new layer for rendering and events. IE. layer
+	 * for world, and a layer for a GUI
+	 */
+	private List<Layer> layerStack;
+
+	/**
 	 * Creates a new Windows object, initializing all private fields not related
 	 * to GLFW / LWJGL.
 	 * 
@@ -86,6 +95,7 @@ public class Window {
 		this.title = title;
 		this.width = width;
 		this.height = height;
+		this.layerStack = new ArrayList<Layer>();
 	}
 
 	/**
@@ -96,13 +106,11 @@ public class Window {
 	 */
 	public void init() throws IllegalStateException, RuntimeException {
 		// Set Error Callback for GLFW and make errorCallback point to it.
-		GLFW.glfwSetErrorCallback((errorCallback = Callbacks
-				.errorCallbackPrint(System.err)));
+		GLFW.glfwSetErrorCallback((errorCallback = Callbacks.errorCallbackPrint(System.err)));
 
 		// If GLFW fails to initialize then I will throw an error at you.
 		if (GLFW.glfwInit() != GL11.GL_TRUE)
-			throw new IllegalStateException(
-					"Sorry, I failed at initializing GLFW.");
+			throw new IllegalStateException("Sorry, I failed at initializing GLFW.");
 
 		// Now that GLFW is init. We can make the Window!
 		// First we can't GLFW to know that we don't want the window to show up
@@ -113,8 +121,7 @@ public class Window {
 
 		// Now that GLFW know what we want the window to do we will create the
 		// window.
-		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL,
-				MemoryUtil.NULL);
+		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 
 		// However if the window fails to be made it will just return
 		// MemoryUtil.NULL.
@@ -138,15 +145,14 @@ public class Window {
 
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2,
-				(GLFWvidmode.height(vidmode) - height) / 2);
+		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(0);
 		glfwShowWindow(window);
 
 		GL.createCapabilities();
-		glClearColor(0f, 0f, 0.5f, 1f);
+		glClearColor(0f, 0f, 0f, 1f);
 	}
 
 	public void updateWindow() {
@@ -159,14 +165,22 @@ public class Window {
 		}
 	}
 
-	public void render() {
+	public void onRender() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+		for (int i = 0; i < layerStack.size(); i++)
+			layerStack.get(i).onRender();
+
 		GLFW.glfwSwapBuffers(window);
 	}
 
 	public void dispose() {
 		GLFW.glfwTerminate();
 		errorCallback.release();
+	}
+
+	public void addLayer(Layer l) {
+		layerStack.add(l);
 	}
 
 	public String getTitle() {

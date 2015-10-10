@@ -1,6 +1,9 @@
-package com.nowabwagel.engine.core.input.events;
+package com.nowabwagel.engine.core.events.types;
 
-public class KeyEvent {
+import com.nowabwagel.engine.core.events.Event;
+
+public class KeyEvent extends Event{
+	public static final String EVENT_TAG = "KeyEvent";
 	private long window;
 	private int key;
 	private int scancode;
@@ -8,7 +11,7 @@ public class KeyEvent {
 	private int mods;
 
 	public KeyEvent(long window, int key, int scancode, int action, int mods) {
-		super();
+		super(EVENT_TAG);
 		this.window = window;
 		this.key = key;
 		this.scancode = scancode;

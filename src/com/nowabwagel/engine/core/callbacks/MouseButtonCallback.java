@@ -3,7 +3,7 @@ package com.nowabwagel.engine.core.callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
-import com.nowabwagel.engine.core.input.events.MouseEvent;
+import com.nowabwagel.engine.core.events.types.MouseEvent;
 import com.nowabwagel.util.FiFoBuffer;
 
 public class MouseButtonCallback extends GLFWMouseButtonCallback {
