@@ -18,20 +18,94 @@ public class Vector2f {
 		this.y = (float) y;
 	}
 
-	public float getX() {
-		return x;
+	public float length() {
+		return (float) Math.sqrt(x * x + y * y);
 	}
 
-	public void setX(float x) {
-		this.x = x;
+	public float dot(Vector2f v) {
+		return x * v.x + y * v.y;
+	}
+
+	/**
+	 * Vector will lose length component as length will now become one.
+	 * 
+	 * @return Itself
+	 */
+	public Vector2f normalize() {
+		float length = length();
+		x /= length;
+		y /= length;
+		return this;
+	}
+
+	public Vector2f rotate(float angle) {
+		double rad = Math.toRadians(angle);
+		double cos = Math.cos(rad);
+		double sin = Math.sin(rad);
+		return new Vector2f(x * cos - y * sin, x * sin + y * cos);
+	}
+
+	public Vector2f add(Vector2f v) {
+		return new Vector2f(x + v.x, y + v.y);
+	}
+
+	public Vector2f add(float v) {
+		return new Vector2f(x + v, y + v);
+	}
+
+	public Vector2f sub(Vector2f v) {
+		return new Vector2f(x - v.x, y - v.y);
+	}
+
+	public Vector2f sub(float v) {
+		return new Vector2f(x - v, y - v);
+	}
+
+	public Vector2f mul(Vector2f v) {
+		return new Vector2f(x * v.x, y * v.y);
+	}
+
+	public Vector2f mul(float v) {
+		return new Vector2f(x * v, y * v);
+	}
+
+	public Vector2f div(Vector2f v) {
+		return new Vector2f(x / v.x, y / v.y);
+	}
+
+	public Vector2f div(float v) {
+		return new Vector2f(x / v, y / v);
+	}
+
+	public Vector2f abs() {
+		return new Vector2f(Math.abs(x), Math.abs(y));
+	}
+
+	public float getX() {
+		return x;
 	}
 
 	public float getY() {
 		return y;
 	}
 
+	public void setX(float x) {
+		this.x = x;
+	}
+
 	public void setY(float y) {
 		this.y = y;
+	}
+
+	public Vector2f set(float x, float y) {
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+
+	public Vector2f set(Vector2f v) {
+		set(v.x, v.y);
+		return this;
 	}
 
 	@Override

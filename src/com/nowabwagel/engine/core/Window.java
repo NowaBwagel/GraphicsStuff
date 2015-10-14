@@ -166,8 +166,6 @@ public class Window {
 	}
 
 	public void onRender() {
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
 		for (int i = 0; i < layerStack.size(); i++)
 			layerStack.get(i).onRender();
 

@@ -20,19 +20,25 @@ public class MainComponent {
 
 	public MainComponent(String title, int width, int height, double FRAME_CAP) {
 		display = new Window(title, width, height);
+		display.init();
+
+		System.out.println("Currently Running OpenGL version: " + RenderUtil.getOpenGLVersion());
+
 		game = new Game();
 		this.FRAME_CAP = FRAME_CAP;
 
+		window = display.getWindow();
+		//display.addLayer(new TestLayer());
+		
+		RenderUtil.initGraphics();
+		
 		isRunning = false;
 	}
 
 	public void start() {
 		if (isRunning)
 			return;
-
-		display.init();
-		window = display.getWindow();
-		display.addLayer(new TestLayer());
+		
 		run();
 	}
 
@@ -128,6 +134,7 @@ public class MainComponent {
 	}
 
 	private void onRender() {
+		RenderUtil.clear();
 		game.render();
 		display.onRender();
 	}
@@ -137,7 +144,7 @@ public class MainComponent {
 	}
 
 	public static void main(String[] args) {
-		MainComponent game = new MainComponent("Im a test m8", 800, 600, 120.0);
+		MainComponent game = new MainComponent("Im a test m8", 800, 600, 300.0);
 
 		game.start();
 	}
