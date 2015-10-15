@@ -1,6 +1,7 @@
 package com.nowabwagel.engine.core;
 
 import com.nowabwagel.engine.core.math.Matrix4f;
+import com.nowabwagel.engine.core.math.Quaternion;
 import com.nowabwagel.engine.core.math.Vector3f;
 
 public class Transform {
@@ -22,6 +23,16 @@ public class Transform {
 		Matrix4f scaleMatrix = new Matrix4f().initScale(scale.getX(), scale.getY(), scale.getZ());
 
 		return translationmMatrix.mul(roationMatrix.mul(scaleMatrix));
+	}
+	
+	public Quaternion getTransformedRot()
+	{
+		Quaternion parentRotation = new Quaternion(0,0,0,1);
+
+		// if(parent != null)
+		// 	parentRotation = parent.getTransformedRot();
+
+		return parentRotation.mul(rotation);
 	}
 
 	public Vector3f getTranslation() {

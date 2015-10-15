@@ -22,23 +22,24 @@ public class MainComponent {
 		display = new Window(title, width, height);
 		display.init();
 
-		System.out.println("Currently Running OpenGL version: " + RenderUtil.getOpenGLVersion());
+		System.out.println("Currently Running OpenGL version: "
+				+ RenderUtil.getOpenGLVersion());
 
-		game = new Game();
+		game = new Game(display);
 		this.FRAME_CAP = FRAME_CAP;
 
 		window = display.getWindow();
-		//display.addLayer(new TestLayer());
-		
+		display.addLayer(new TestLayer());
+
 		RenderUtil.initGraphics();
-		
+
 		isRunning = false;
 	}
 
 	public void start() {
 		if (isRunning)
 			return;
-		
+
 		run();
 	}
 
@@ -135,7 +136,6 @@ public class MainComponent {
 
 	private void onRender() {
 		RenderUtil.clear();
-		game.render();
 		display.onRender();
 	}
 

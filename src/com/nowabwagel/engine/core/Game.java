@@ -3,16 +3,21 @@ package com.nowabwagel.engine.core;
 import com.nowabwagel.engine.core.math.Vector3f;
 
 public class Game {
+	private Window window;
 	private Mesh mesh;
 	private Shader shader;
 	private Transform transform;
 
-	public Game() {
+	public Game(Window window) {
+		this.window = window;
+		window.setGame(this);
 		mesh = new Mesh();
 		shader = new Shader();
 
-		Vertex[] vertices = new Vertex[] { new Vertex(new Vector3f(-1, -1, 0)), new Vertex(new Vector3f(0, 1, 0)),
-				new Vertex(new Vector3f(1, -1, 0)), new Vertex(new Vector3f(0, -1, 1)) };
+		Vertex[] vertices = new Vertex[] { new Vertex(new Vector3f(-1, -1, 0)),
+				new Vertex(new Vector3f(0, 1, 0)),
+				new Vertex(new Vector3f(1, -1, 0)),
+				new Vertex(new Vector3f(0, -1, 1)) };
 
 		int[] indices = new int[] { 0, 1, 3, 3, 1, 2, 2, 1, 0, 0, 2, 3 };
 
@@ -25,6 +30,7 @@ public class Game {
 		shader.compileShader();
 
 		shader.addUniform("transform");
+		
 	}
 
 	public void input() {
