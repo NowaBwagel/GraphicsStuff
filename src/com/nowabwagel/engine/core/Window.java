@@ -185,6 +185,13 @@ public class Window {
 		GLFW.glfwSwapBuffers(window);
 	}
 
+	public void onUpdate(float delta) {
+		game.update();
+
+		for (int i = 0; i < layerStack.size(); i++)
+			layerStack.get(i).onUpdate(delta);
+	}
+
 	public void dispose() {
 		GLFW.glfwTerminate();
 		errorCallback.release();

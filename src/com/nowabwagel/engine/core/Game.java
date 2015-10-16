@@ -30,7 +30,7 @@ public class Game {
 		shader.compileShader();
 
 		shader.addUniform("transform");
-		
+
 	}
 
 	public void input() {
@@ -40,7 +40,7 @@ public class Game {
 	float temp = 0.0f;
 
 	public void update() {
-		temp += Time.getDelta();
+		temp += Time.getDelta() / 15;
 
 		transform.setTranslation((float) Math.sin(temp), 0, 0);
 		transform.setRotaion(0, (float) Math.sin(temp) * 180, 0);

@@ -79,8 +79,8 @@ public class MainComponent {
 				Time.setDelta(frameTime);
 
 				game.input();
-				game.update();
 				display.updateWindow();
+				display.onUpdate((float) Time.getDelta());
 
 				if (display.getIsCloseRequested())
 					stop();
