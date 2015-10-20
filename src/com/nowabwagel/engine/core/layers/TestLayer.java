@@ -13,9 +13,12 @@ public class TestLayer extends Layer {
 	private Mesh mesh;
 	private Shader shader;
 	private Transform transform;
+	private Vector3f color;
+	private float time;
 
-	public TestLayer() {
-
+	public TestLayer(Vector3f color, float time) {
+		this.color = color;
+		this.time = time;
 		mesh = new Mesh();
 
 		Vertex[] vertices = new Vertex[] { new Vertex(new Vector3f(-1, -1, 0)),
@@ -36,7 +39,7 @@ public class TestLayer extends Layer {
 		shader.compileShader();
 
 		shader.addUniform("transform");
-
+		shader.addUniform("unicolor");
 	}
 
 	@Override
@@ -49,16 +52,17 @@ public class TestLayer extends Layer {
 	float temp = 0.0f;
 
 	public void onUpdate(float delta) {
-		temp += Time.getDelta() / 15;
+		temp += Time.getDelta() * time;
 
-		transform.setTranslation(-(float) Math.sin(temp), 0, 0);
-		transform.setRotaion(0, -(float) Math.sin(temp) * 180, 0);
+		transform.setTranslation((float) Math.sin(temp), 0, 0);
+		// transform.setRotaion(0, -(float) Math.sin(temp) * 180, 0);
 		// transform.setScale((float) Math.sin(temp), (float) Math.sin(temp),
 		// (float) Math.sin(temp));
 	}
 
 	private void postShaderBindUpdate() {
 		shader.setUniform("transform", transform.getTransformation());
+		shader.setUniform("unicolor", color);
 	}
 
 	@Override

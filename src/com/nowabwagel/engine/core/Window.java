@@ -177,11 +177,11 @@ public class Window {
 	}
 
 	public void onRender() {
-		game.render();
 
-		for (int i = 0; i < layerStack.size(); i++)
+		for (int i = layerStack.size() - 1; i >= 0; i--)
 			layerStack.get(i).onRender();
 
+		game.render();
 		GLFW.glfwSwapBuffers(window);
 	}
 

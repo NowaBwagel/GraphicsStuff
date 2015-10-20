@@ -9,6 +9,7 @@ import com.nowabwagel.engine.core.callbacks.WindowPosCallback;
 import com.nowabwagel.engine.core.events.types.KeyEvent;
 import com.nowabwagel.engine.core.events.types.MouseEvent;
 import com.nowabwagel.engine.core.layers.TestLayer;
+import com.nowabwagel.engine.core.math.Vector3f;
 
 public class MainComponent {
 	private double FRAME_CAP;
@@ -29,7 +30,8 @@ public class MainComponent {
 		this.FRAME_CAP = FRAME_CAP;
 
 		window = display.getWindow();
-		display.addLayer(new TestLayer());
+		display.addLayer(new TestLayer(new Vector3f(1, 0, 0), 0.05f));
+		display.addLayer(new TestLayer(new Vector3f(0, 1, 0), 0.04f));
 
 		RenderUtil.initGraphics();
 
