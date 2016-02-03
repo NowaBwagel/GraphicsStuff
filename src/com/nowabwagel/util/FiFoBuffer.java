@@ -2,6 +2,8 @@ package com.nowabwagel.util;
 
 public class FiFoBuffer<E> {
 
+	private final Class<E> classType;
+
 	private E[] buffer;
 	private int size;
 	private int head;
@@ -9,7 +11,8 @@ public class FiFoBuffer<E> {
 	private boolean isFull;
 	private int objectsIn;
 
-	public FiFoBuffer(int size) {
+	public FiFoBuffer(Class<E> classType, int size) {
+		this.classType = classType;
 		this.size = size;
 		this.head = -1;
 		this.tail = -1;

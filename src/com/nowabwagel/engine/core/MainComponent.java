@@ -31,6 +31,7 @@ public class MainComponent {
 
 		window = display.getWindow();
 		display.addLayer(new TestLayer(new Vector3f(1, 0, 0), 0.05f));
+		display.addLayer(new TestLayer(new Vector3f(0, 0, 1), 0.03f));
 		display.addLayer(new TestLayer(new Vector3f(0, 1, 0), 0.04f));
 
 		RenderUtil.initGraphics();
@@ -146,7 +147,7 @@ public class MainComponent {
 	}
 
 	public static void main(String[] args) {
-		MainComponent game = new MainComponent("Im a test m8", 800, 600, 300.0);
+		MainComponent game = new MainComponent("Im a test m8", 800, 600, 120.0);
 
 		game.start();
 	}

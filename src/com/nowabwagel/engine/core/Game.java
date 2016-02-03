@@ -50,9 +50,9 @@ public class Game {
 	}
 
 	public void render() {
-		shader.bind();
-		postBindUniformUpdate();
-		mesh.draw();
+		//shader.bind();
+		//postBindUniformUpdate();
+		//mesh.draw();
 	}
 
 	private void postBindUniformUpdate() {

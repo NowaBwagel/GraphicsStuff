@@ -55,7 +55,7 @@ public class TestLayer extends Layer {
 		temp += Time.getDelta() * time;
 
 		transform.setTranslation((float) Math.sin(temp), 0, 0);
-		// transform.setRotaion(0, -(float) Math.sin(temp) * 180, 0);
+		//transform.setRotaion(0, -(float) Math.sin(temp) * 180, 0);
 		// transform.setScale((float) Math.sin(temp), (float) Math.sin(temp),
 		// (float) Math.sin(temp));
 	}
