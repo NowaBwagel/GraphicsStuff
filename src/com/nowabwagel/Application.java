@@ -27,13 +27,13 @@ public abstract class Application {
 	private int height;
 
 	private GLFWErrorCallback errorCallback;
-	private WindowCloseCallback windowCloseCallback;
+	// private WindowCloseCallback windowCloseCallback;
 
 	private long window;
 
 	public abstract void startup();
 
-	public abstract void render(long currentTime);
+	public abstract void render(double d);
 
 	public Application() {
 		this("unnamed application", 800, 800);
@@ -68,13 +68,9 @@ public abstract class Application {
 				MemoryUtil.NULL);
 
 		// However if the window fails to be made it will just return
-		// MemoryUtil.NULL.
+		// MemoryUtil.NULL
 		if (window == MemoryUtil.NULL)
 			throw new RuntimeException("Sorry, I failed at making a window.");
-
-		windowCloseCallback = new WindowCloseCallback();
-
-		GLFW.glfwSetWindowCloseCallback(window, windowCloseCallback);
 
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -86,37 +82,30 @@ public abstract class Application {
 		glfwShowWindow(window);
 
 		GL.createCapabilities();
-		glClearColor(0f, 0f, 0f, 1f);
 
 		startup();
 		run();
 	}
 
 	private void onRender() {
-		render(System.nanoTime());
+		render(System.nanoTime() / 1000000000.0D);
 		GLFW.glfwSwapBuffers(window);
 	}
 
 	private void run() {
-		while (true) {
+		while (GLFW.glfwWindowShouldClose(window) == GL11.GL_FALSE) {
+			// GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |
+			// GL11.GL_DEPTH_BUFFER_BIT);
+
 			onRender();
-			
 			GLFW.glfwPollEvents();
-			
-			if (windowCloseCallback.isCloseRequested())
-				dispose();
-			
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
+
+		dispose();
 	}
 
 	private void dispose() {
 		GLFW.glfwTerminate();
 		errorCallback.release();
-		windowCloseCallback.release();
 	}
 }
