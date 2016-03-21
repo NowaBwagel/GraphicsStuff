@@ -21,7 +21,7 @@ public class Shader {
 		uniforms = new HashMap<String, Integer>();
 
 		if (program == 0) {
-			System.err.println("Shader creation failed: Could not fin valid memory location in constructor");
+			System.err.println("Shader creation failed: Could not find valid memory location in constructor");
 			System.exit(1);
 		}
 

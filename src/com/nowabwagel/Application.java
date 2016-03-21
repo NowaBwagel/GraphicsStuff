@@ -35,8 +35,10 @@ public abstract class Application {
 
 	public abstract void render(double d);
 
+	public abstract void shutdown();
+
 	public Application() {
-		this("unnamed application", 800, 800);
+		this("unnamed application", 800, 600);
 	}
 
 	public Application(String title, int width, int height) {
@@ -47,13 +49,11 @@ public abstract class Application {
 
 	public void start() {
 		// Set Error Callback for GLFW and make errorCallback point to it.
-		GLFW.glfwSetErrorCallback((errorCallback = Callbacks
-				.errorCallbackPrint(System.err)));
+		GLFW.glfwSetErrorCallback((errorCallback = Callbacks.errorCallbackPrint(System.err)));
 
 		// If GLFW fails to initialize then I will throw an error at you.
 		if (GLFW.glfwInit() != GL11.GL_TRUE)
-			throw new IllegalStateException(
-					"Sorry, I failed at initializing GLFW.");
+			throw new IllegalStateException("Sorry, I failed at initializing GLFW.");
 
 		// Now that GLFW is init. We can make the Window!
 		// First we can't GLFW to know that we don't want the window to show up
@@ -64,8 +64,7 @@ public abstract class Application {
 
 		// Now that GLFW know what we want the window to do we will create the
 		// window.
-		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL,
-				MemoryUtil.NULL);
+		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 
 		// However if the window fails to be made it will just return
 		// MemoryUtil.NULL
@@ -74,8 +73,7 @@ public abstract class Application {
 
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2,
-				(GLFWvidmode.height(vidmode) - height) / 2);
+		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(0);
@@ -101,6 +99,7 @@ public abstract class Application {
 			GLFW.glfwPollEvents();
 		}
 
+		shutdown();
 		dispose();
 	}
 

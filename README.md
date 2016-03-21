@@ -1,2 +1,2 @@
 # GraphicsStuff
-LOL BITCH
+Hi mom
