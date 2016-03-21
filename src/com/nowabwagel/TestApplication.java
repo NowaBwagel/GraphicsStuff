@@ -28,6 +28,7 @@ public class TestApplication extends Application {
 		// "#version 450 core \n" + "out vec4 color; \n" + "void main(void){ \n"
 		// + " color = vec4(0.0, 0.8, 1.0, 1.0); \n" + "} \n";
 
+
 		shaderProgram = Utils.compileShaderProgram(vertex, fragment);
 		vao = GL30.glGenVertexArrays();
 		// GL45.glCreateVertexArrays(1, vao);

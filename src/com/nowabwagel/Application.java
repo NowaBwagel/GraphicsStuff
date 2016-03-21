@@ -6,11 +6,8 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
-import static org.lwjgl.opengl.GL11.glClearColor;
 
 import java.nio.ByteBuffer;
-
-import old.com.nowabwagel.engine.core.callbacks.WindowCloseCallback;
 
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
@@ -49,11 +46,13 @@ public abstract class Application {
 
 	public void start() {
 		// Set Error Callback for GLFW and make errorCallback point to it.
-		GLFW.glfwSetErrorCallback((errorCallback = Callbacks.errorCallbackPrint(System.err)));
+		GLFW.glfwSetErrorCallback((errorCallback = Callbacks
+				.errorCallbackPrint(System.err)));
 
 		// If GLFW fails to initialize then I will throw an error at you.
 		if (GLFW.glfwInit() != GL11.GL_TRUE)
-			throw new IllegalStateException("Sorry, I failed at initializing GLFW.");
+			throw new IllegalStateException(
+					"Sorry, I failed at initializing GLFW.");
 
 		// Now that GLFW is init. We can make the Window!
 		// First we can't GLFW to know that we don't want the window to show up
@@ -64,7 +63,8 @@ public abstract class Application {
 
 		// Now that GLFW know what we want the window to do we will create the
 		// window.
-		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
+		window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL,
+				MemoryUtil.NULL);
 
 		// However if the window fails to be made it will just return
 		// MemoryUtil.NULL
@@ -73,13 +73,16 @@ public abstract class Application {
 
 		ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2, (GLFWvidmode.height(vidmode) - height) / 2);
+		glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - width) / 2,
+				(GLFWvidmode.height(vidmode) - height) / 2);
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(0);
+		glfwSwapInterval(60);
 		glfwShowWindow(window);
 
 		GL.createCapabilities();
+		System.out.println("OpenGL version: "
+				+ GL11.glGetString(GL11.GL_VERSION));
 
 		startup();
 		run();

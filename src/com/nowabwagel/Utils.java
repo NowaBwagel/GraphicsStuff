@@ -33,9 +33,11 @@ public class Utils {
 
 	private static int createProgram(int... shaders) {
 		int program = GL20.glCreateProgram();
+
 		for (int i = 0; i < shaders.length; i++)
 			GL20.glAttachShader(program, shaders[i]);
 
+		System.out.println("Im good");
 		GL20.glLinkProgram(program);
 
 		if (GL20.glGetProgrami(program, GL20.GL_LINK_STATUS) == 0) {
