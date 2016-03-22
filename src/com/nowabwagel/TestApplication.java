@@ -2,6 +2,7 @@ package com.nowabwagel;
 
 import java.nio.FloatBuffer;
 
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -18,16 +19,18 @@ public class TestApplication extends Application {
 	@Override
 	public void startup() {
 		System.out.println("Starting");
-		String vertex = Utils.getFileAsString("vertex.txt");
-		// "#version 450 core \n" + "void main(void){ \n"
-		// + "const vec4 vertices[3] = vec4[3](vec4(0.25,-0.25,0.5,1.0),
-		// vec4(-0.25,-0.25,0.5,1.0),vec4(0.25, 0.25, 0.5, 1.0));\n"
-		// + " gl_Position = vertices[gl_VertexID]; \n" + "} \n";
+		String vertex;
+		String fragment;
 
-		String fragment = Utils.getFileAsString("fragment.txt");
-		// "#version 450 core \n" + "out vec4 color; \n" + "void main(void){ \n"
-		// + " color = vec4(0.0, 0.8, 1.0, 1.0); \n" + "} \n";
-
+		if (GL.getCapabilities().OpenGL45) {
+			System.out.println("Going to use Shaders for 450");
+			vertex = Utils.getFileAsString("vertex450.txt");
+			fragment = Utils.getFileAsString("fragment450.txt");
+		} else {
+			System.out.println("Going to use Shaders for 330");
+			vertex = Utils.getFileAsString("vertex330.txt");
+			fragment = Utils.getFileAsString("fragment330.txt");
+		}
 
 		shaderProgram = Utils.compileShaderProgram(vertex, fragment);
 		vao = GL30.glGenVertexArrays();

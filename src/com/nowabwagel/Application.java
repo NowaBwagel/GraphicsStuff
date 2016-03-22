@@ -77,7 +77,7 @@ public abstract class Application {
 				(GLFWvidmode.height(vidmode) - height) / 2);
 
 		glfwMakeContextCurrent(window);
-		glfwSwapInterval(60);
+		glfwSwapInterval(1);
 		glfwShowWindow(window);
 
 		GL.createCapabilities();

@@ -15,7 +15,6 @@ public class Layer implements EventListener {
 	}
 
 	public void onRender() {
-		// TODO Auto-generated method stub
 
 	}
 
